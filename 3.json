@@ -1,0 +1,283 @@
+{
+  "log": {
+    "disabled": false,
+    "level": "warn",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "default-dns",
+        "address": "223.5.5.5",
+        "detour": "direct-out"
+      },
+      {
+        "tag": "system-dns",
+        "address": "local",
+        "detour": "direct-out"
+      },
+      {
+        "tag": "block-dns",
+        "address": "rcode://name_error"
+      },
+      {
+        "tag": "google",
+        "address": "https://dns.google/dns-query",
+        "address_resolver": "default-dns",
+        "address_strategy": "ipv4_only",
+        "strategy": "ipv4_only",
+        "client_subnet": "1.0.1.0"
+      }
+    ],
+    "rules": [
+      {
+        "outbound": "any",
+        "server": "default-dns"
+      },
+      {
+        "query_type": "HTTPS",
+        "server": "block-dns"
+      },
+      {
+        "clash_mode": "direct",
+        "server": "default-dns"
+      },
+      {
+        "clash_mode": "global",
+        "server": "google"
+      },
+      {
+        "rule_set": "cnsite",
+        "server": "default-dns"
+      }, 
+      {
+        "rule_set": "cnsite-!cn", 
+        "server": "google"
+      }
+    ],
+    "strategy": "ipv4_only",
+    "disable_cache": false,
+    "disable_expire": false,
+    "independent_cache": false,
+    "final": "google"
+  },
+  "inbounds": [
+    {
+      "type": "tun", 
+      "inet4_address": "172.19.0.1/30", 
+      "inet6_address": "fd00::1/126", 
+      "auto_route": true, 
+      "strict_route": true, 
+      "sniff": true, 
+      "sniff_override_destination": true, 
+      "domain_strategy": "prefer_ipv4"
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "vless",
+      "tag": "DMIT-LA",
+      "server": "dmitla.840501.xyz", 
+      "server_port": 443,
+      "uuid": "80ccc076-2896-4ae1-a792-52a221228dd9", 
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "enabled": true,
+        "server_name": "www.nature.com", 
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "Q3MteRAjaeldXo4kZpCMxeD5UMjKM7RMA7pnyjw0QgM",
+          "short_id": "80b85da5"
+        }
+      }
+    },
+	{
+      "type": "vless",
+      "tag": "V.PS-TYO",
+      "server": "sb.840501.xyz", 
+      "server_port": 57732,
+      "uuid": "3c62d24f-786c-4d5c-ad60-b432885b02e2", 
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "enabled": true,
+        "server_name": "www.lovelive-anime.jp", 
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "MuJBBX6fZMb45ChKgCCt7Ydi-sgs7qbG-sR3pof7sEs",
+          "short_id": "de89a2a4"
+        }
+      }
+    },
+	{
+      "type": "vless",
+      "tag": "YxVM-TYO",
+      "server": "yxvm.840501.xyz", 
+      "server_port": 43159,
+      "uuid": "56c1e843-37a0-47eb-bf53-64e8bcd4eecb", 
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "enabled": true,
+        "server_name": "www.lovelive-anime.jp", 
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "AHDs3OjTJbNjcmxc-rngiTNivBVplMdBON_Lnd3EuWY",
+          "short_id": "9815b168"
+        }
+      }
+    },
+	{
+      "type": "vless",
+      "tag": "YxVM-HK",
+      "server": "yxvmhk.840501.xyz", 
+      "server_port": 11572,
+      "uuid": "70ccd928-f3c4-4ff6-8b5f-32076fdd6b6f", 
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "enabled": true,
+        "server_name": "aod.itunes.apple.com", 
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "sLPeDQ9hokXcEXwdLGRnIeWo2AkxpDjo95mAagAoRxI",
+          "short_id": "6ba85179e30d4fc2"
+        }
+      }
+    },
+    {
+      "type": "urltest",
+      "tag": "auto",
+      "outbounds": [
+        "DMIT-LA", 
+        "V.PS-TYO", 
+        "YxVM-TYO", 
+        "YxVM-HK", 
+      ],
+      "url": "https://www.gstatic.com/generate_204",
+      "interval": "1m",
+      "tolerance": 50,
+      "interrupt_exist_connections": false
+    },
+    {
+      "type": "selector",
+      "tag": "select",
+      "outbounds": [
+        "DMIT-LA", 
+        "V.PS-TYO", 
+        "YxVM-TYO", 
+        "YxVM-HK", 
+        "auto"
+      ],
+      "default": "auto",
+      "interrupt_exist_connections": false
+    },
+    {
+      "type": "direct",
+      "tag": "direct-out",
+      "routing_mark": 100
+    },
+    {
+      "type": "block",
+      "tag": "block-out"
+    },
+    {
+      "type": "dns",
+      "tag": "dns-out"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "protocol": "dns",
+        "outbound": "dns-out"
+      },
+      {
+        "protocol": "quic",
+        "outbound": "block-out"
+      },
+      {
+        "clash_mode": "block",
+        "outbound": "block-out"
+      },
+      {
+        "clash_mode": "direct",
+        "outbound": "direct-out"
+      },
+      {
+        "clash_mode": "global",
+        "outbound": "select"
+      },
+      {
+        "rule_set": [
+          "cnip",
+          "cnsite"
+        ],
+        "outbound": "direct-out"
+      }, 
+      {
+        "rule_set": "cnsite-!cn", 
+        "outbound": "select"
+      }
+    ],
+    "rule_set": [
+      {
+        "type": "remote", 
+        "tag": "cnsite-!cn", 
+        "format": "binary", 
+        "url": "https://github.com/SagerNet/sing-geosite/raw/rule-set/geosite-geolocation-!cn.srs", 
+        "download_detour": "auto"
+      }, 
+      {
+        "type": "remote",
+        "tag": "cnip",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo-lite/geoip/cn.srs",
+        "download_detour": "auto"
+      },
+      {
+        "type": "remote",
+        "tag": "cnsite",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo-lite/geosite/cn.srs",
+        "download_detour": "auto"
+      }
+    ],
+    "auto_detect_interface": true,
+    "final": "select"
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true, 
+      "path": "cache.db", 
+      "store_fakeip": true
+    },
+    "clash_api": {
+      "external_controller": "127.0.0.1:9090",
+      "external_ui": "ui", 
+      "external_ui_download_url": "", 
+      "external_ui_download_detour": "auto",
+      "default_mode": "rule"
+    }
+  },
+  "ntp": {
+    "enabled": true,
+    "server": "time.apple.com",
+    "server_port": 123,
+    "interval": "30m",
+    "detour": "direct-out"
+  }
+}
