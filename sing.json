@@ -14,7 +14,7 @@
       {
         "tag": "google",
         "address": "8.8.8.8",
-		"detour": "手动选择"
+	"detour": "手动选择"
       }
     ],
     "rules": [
