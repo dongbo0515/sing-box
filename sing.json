@@ -1,0 +1,234 @@
+{
+  "log": {
+    "disabled": false,
+    "level": "debug",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "default-dns",
+        "address": "local",
+        "detour": "全球直连"
+      },
+      {
+        "tag": "google",
+        "address": "8.8.8.8",
+		"detour": "手动选择"
+      }
+    ],
+    "rules": [
+      {
+        "outbound": "any",
+        "server": "default-dns"
+      },
+      {
+        "clash_mode": "direct",
+        "server": "default-dns"
+      },
+      {
+        "clash_mode": "global",
+        "server": "google"
+      },
+      {
+        "rule_set": "cnsite",
+        "server": "default-dns"
+      }, 
+    ],
+    "disable_cache": false,
+    "disable_expire": false,
+    "independent_cache": false,
+    "final": "google"
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "inet4_address": "172.19.0.1/30",
+      "inet6_address": "fd00::1/126",
+      "mtu": 9000,
+      "gso": true,
+      "auto_route": true,
+      "strict_route": true,
+      "stack": "gvisor",
+      "sniff": true,
+      "sniff_override_destination": true
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "vless",
+      "tag": "DMIT-LA",
+      "server": "dmitla.840501.xyz", 
+      "server_port": 443,
+      "uuid": "80ccc076-2896-4ae1-a792-52a221228dd9", 
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "enabled": true,
+        "server_name": "www.nature.com", 
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "Q3MteRAjaeldXo4kZpCMxeD5UMjKM7RMA7pnyjw0QgM",
+          "short_id": "80b85da5"
+        }
+      }
+    },
+	{
+      "type": "vless",
+      "tag": "V.PS-TYO",
+      "server": "sb.840501.xyz", 
+      "server_port": 57732,
+      "uuid": "3c62d24f-786c-4d5c-ad60-b432885b02e2", 
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "enabled": true,
+        "server_name": "www.lovelive-anime.jp", 
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "MuJBBX6fZMb45ChKgCCt7Ydi-sgs7qbG-sR3pof7sEs",
+          "short_id": "de89a2a4"
+        }
+      }
+    },
+	{
+      "type": "vless",
+      "tag": "YxVM-TYO",
+      "server": "yxvm.840501.xyz", 
+      "server_port": 43159,
+      "uuid": "56c1e843-37a0-47eb-bf53-64e8bcd4eecb", 
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "enabled": true,
+        "server_name": "www.lovelive-anime.jp", 
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "AHDs3OjTJbNjcmxc-rngiTNivBVplMdBON_Lnd3EuWY",
+          "short_id": "9815b168"
+        }
+      }
+    },
+	{
+      "type": "vless",
+      "tag": "YxVM-HK",
+      "server": "yxvmhk.840501.xyz", 
+      "server_port": 11572,
+      "uuid": "70ccd928-f3c4-4ff6-8b5f-32076fdd6b6f", 
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "enabled": true,
+        "server_name": "aod.itunes.apple.com", 
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "sLPeDQ9hokXcEXwdLGRnIeWo2AkxpDjo95mAagAoRxI",
+          "short_id": "6ba85179e30d4fc2"
+        }
+      }
+    },
+    {
+      "type": "urltest",
+      "tag": "自动选择",
+      "outbounds": [
+        "DMIT-LA", 
+        "V.PS-TYO", 
+        "YxVM-TYO", 
+        "YxVM-HK", 
+      ],
+      "url": "https://www.gstatic.com/generate_204",
+      "interval": "3m",
+      "tolerance": 30,
+      "interrupt_exist_connections": false
+    },
+    {
+      "type": "selector",
+      "tag": "手动选择",
+      "outbounds": [
+        "DMIT-LA", 
+        "V.PS-TYO", 
+        "YxVM-TYO", 
+        "YxVM-HK",  
+        "自动选择"
+      ],
+      "default": "自动选择",
+      "interrupt_exist_connections": false
+    },
+    {
+      "type": "direct",
+      "tag": "全球直连",
+      "routing_mark": 100
+    },
+  ],
+  "route": {
+    "rules": [
+      {
+        "clash_mode": "direct",
+        "outbound": "全球直连"
+      },
+      {
+        "clash_mode": "global",
+        "outbound": "手动选择"
+      },
+      {
+        "rule_set": [
+          "cnip",
+          "cnsite"
+        ],
+        "outbound": "全球直连"
+      }, 
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "cnip",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo-lite/geoip/cn.srs",
+        "download_detour": "自动选择"
+      },
+      {
+        "type": "remote",
+        "tag": "cnsite",
+        "format": "binary",
+        "url": "https://github.com/MetaCubeX/meta-rules-dat/raw/sing/geo-lite/geosite/cn.srs",
+        "download_detour": "自动选择"
+      }
+    ],
+    "auto_detect_interface": true,
+    "final": "手动选择"
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true, 
+      "path": "cache.db", 
+      "store_fakeip": true
+    },
+    "clash_api": {
+      "external_controller": "127.0.0.1:9090",
+      "external_ui": "ui", 
+      "external_ui_download_url": "https://github.com/MetaCubeX/Yacd-meta/archive/gh-pages.zip", 
+      "external_ui_download_detour": "自动选择",
+      "default_mode": "rule"
+    }
+  },
+  "ntp": {
+    "enabled": true,
+    "server": "time.apple.com",
+    "server_port": 123,
+    "interval": "30m",
+    "detour": "全球直连"
+  }
+}
